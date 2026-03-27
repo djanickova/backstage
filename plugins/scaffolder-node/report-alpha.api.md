@@ -4,6 +4,7 @@
 
 ```ts
 import { ExtensionPoint } from '@backstage/backend-plugin-api';
+import { JsonObject } from '@backstage/types';
 import { JsonValue } from '@backstage/types';
 import { TaskBroker } from '@backstage/plugin-scaffolder-node';
 import { TemplateFilter as TemplateFilter_2 } from '@backstage/plugin-scaffolder-node';
@@ -129,6 +130,24 @@ export interface ScaffolderAutocompleteExtensionPoint {
 
 // @alpha
 export const scaffolderAutocompleteExtensionPoint: ExtensionPoint<ScaffolderAutocompleteExtensionPoint>;
+
+// @alpha
+export interface ScaffolderSecretProvider {
+  // (undocumented)
+  resolveSecret(options: { name: string; config: JsonObject }): Promise<string>;
+}
+
+// @alpha
+export interface ScaffolderSecretProviderExtensionPoint {
+  // (undocumented)
+  addProvider(options: {
+    id: string;
+    provider: ScaffolderSecretProvider;
+  }): void;
+}
+
+// @alpha
+export const scaffolderSecretProviderExtensionPoint: ExtensionPoint<ScaffolderSecretProviderExtensionPoint>;
 
 // @alpha @deprecated
 export interface ScaffolderTaskBrokerExtensionPoint {

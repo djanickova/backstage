@@ -20,6 +20,7 @@ import {
   TemplateFilter,
   TemplateGlobal,
 } from '@backstage/plugin-scaffolder-node';
+import { JsonObject } from '@backstage/types';
 import { CreatedTemplateFilter } from './filters';
 import { CreatedTemplateGlobal } from './globals';
 
@@ -152,4 +153,35 @@ export interface ScaffolderWorkspaceProviderExtensionPoint {
 export const scaffolderWorkspaceProviderExtensionPoint =
   createExtensionPoint<ScaffolderWorkspaceProviderExtensionPoint>({
     id: 'scaffolder.workspace.provider',
+  });
+
+/**
+ * A provider that resolves secrets from an external secret manager.
+ *
+ * @alpha
+ */
+export interface ScaffolderSecretProvider {
+  resolveSecret(options: { name: string; config: JsonObject }): Promise<string>;
+}
+
+/**
+ * Extension point for registering external secret providers.
+ *
+ * @alpha
+ */
+export interface ScaffolderSecretProviderExtensionPoint {
+  addProvider(options: {
+    id: string;
+    provider: ScaffolderSecretProvider;
+  }): void;
+}
+
+/**
+ * Extension point for registering external secret providers.
+ *
+ * @alpha
+ */
+export const scaffolderSecretProviderExtensionPoint =
+  createExtensionPoint<ScaffolderSecretProviderExtensionPoint>({
+    id: 'scaffolder.secretProvider',
   });
