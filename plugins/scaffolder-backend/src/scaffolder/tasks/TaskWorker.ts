@@ -31,6 +31,7 @@ import { WorkflowRunner } from './types';
 import { setTimeout } from 'node:timers/promises';
 import { JsonObject } from '@backstage/types';
 import { Config } from '@backstage/config';
+import { ScaffolderSecretProvider } from '@backstage/plugin-scaffolder-node/alpha';
 
 const DEFAULT_TASK_PARAMETER_MAX_LENGTH = 256;
 
@@ -78,6 +79,7 @@ export type CreateWorkerOptions = {
   additionalTemplateGlobals?: Record<string, TemplateGlobal>;
   permissions?: PermissionEvaluator;
   gracefulShutdown?: boolean;
+  secretProviders?: Record<string, ScaffolderSecretProvider>;
 };
 
 /**
@@ -123,6 +125,7 @@ export class TaskWorker {
       additionalTemplateGlobals,
       permissions,
       gracefulShutdown,
+      secretProviders,
     } = options;
 
     const workflowRunner = new NunjucksWorkflowRunner({
@@ -135,6 +138,7 @@ export class TaskWorker {
       additionalTemplateGlobals,
       permissions,
       config,
+      secretProviders,
     });
 
     return new TaskWorker({

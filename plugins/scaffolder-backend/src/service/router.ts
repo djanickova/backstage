@@ -78,6 +78,7 @@ import {
   AutocompleteHandler,
   CreatedTemplateFilter,
   CreatedTemplateGlobal,
+  ScaffolderSecretProvider,
   WorkspaceProvider,
 } from '@backstage/plugin-scaffolder-node/alpha';
 import { HumanDuration, JsonObject } from '@backstage/types';
@@ -165,6 +166,7 @@ export interface RouterOptions {
   auditor?: AuditorService;
   autocompleteHandlers?: Record<string, AutocompleteHandler>;
   actionsRegistry: ActionsService;
+  secretProviders?: Record<string, ScaffolderSecretProvider>;
 }
 
 function isSupportedTemplate(entity: TemplateEntityV1beta3) {
@@ -256,6 +258,7 @@ export async function createRouter(
     httpAuth,
     auditor,
     actionsRegistry,
+    secretProviders,
   } = options;
 
   const concurrentTasksLimit =
@@ -344,6 +347,7 @@ export async function createRouter(
       concurrentTasksLimit,
       permissions,
       gracefulShutdown,
+      secretProviders,
       ...templateExtensions,
     });
 

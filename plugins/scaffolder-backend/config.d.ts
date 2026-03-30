@@ -122,11 +122,18 @@ export interface Config {
 
       /**
        * Secret values from environment variables accessible via ${{ environment.secrets.* }} in templates.
-       * Values should reference environment variables like ${SECRET_NAME}.
+       * Each entry can be either a plain string (e.g. an environment variable reference like ${SECRET_NAME})
+       * or an object with a `provider` field that delegates to a registered secret provider.
        * @visibility secret
        */
       secrets?: {
-        [key: string]: string;
+        [key: string]:
+          | string
+          | {
+              /** The id of the registered secret provider. */
+              provider: string;
+              [key: string]: string;
+            };
       };
     };
   };

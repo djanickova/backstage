@@ -16,6 +16,7 @@
 
 import { Config } from '@backstage/config';
 import { JsonObject } from '@backstage/types';
+import { ScaffolderSecretProvider } from '@backstage/plugin-scaffolder-node/alpha';
 
 export interface DefaultEnvironmentConfig {
   parameters?: Record<string, any>;
@@ -27,9 +28,10 @@ export interface ResolvedDefaultEnvironment {
   secrets: Record<string, string>;
 }
 
-export function resolveDefaultEnvironment(
+export async function resolveDefaultEnvironment(
   config: Config,
-): ResolvedDefaultEnvironment {
+  secretProviders?: Record<string, ScaffolderSecretProvider>,
+): Promise<ResolvedDefaultEnvironment> {
   const defaultEnvConfig = config.getOptionalConfig(
     'scaffolder.defaultEnvironment',
   );
@@ -54,8 +56,32 @@ export function resolveDefaultEnvironment(
   const secretsConfig = defaultEnvConfig.getOptionalConfig('secrets');
   if (secretsConfig) {
     for (const secretKey of secretsConfig.keys()) {
-      const secretValue = secretsConfig.getString(secretKey);
-      secrets[secretKey] = secretValue;
+      const stringValue = secretsConfig.getOptionalString(secretKey);
+
+      if (stringValue !== undefined) {
+        secrets[secretKey] = stringValue;
+      } else {
+        const secretKeyConfig = secretsConfig.getConfig(secretKey);
+        const providerId = secretKeyConfig.getString('provider');
+        const provider = secretProviders?.[providerId];
+        if (!provider) {
+          throw new Error(
+            `No secret provider registered with id '${providerId}' for secret '${secretKey}'`,
+          );
+        }
+
+        const providerConfig: JsonObject = {};
+        for (const key of secretKeyConfig.keys()) {
+          if (key !== 'provider') {
+            providerConfig[key] = secretKeyConfig.get(key) as any;
+          }
+        }
+
+        secrets[secretKey] = await provider.resolveSecret({
+          name: secretKey,
+          config: providerConfig,
+        });
+      }
     }
   }
 

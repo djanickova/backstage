@@ -34,7 +34,9 @@ import {
   createTemplateFilter,
   createTemplateGlobalFunction,
   createTemplateGlobalValue,
+  ScaffolderSecretProvider,
   scaffolderAutocompleteExtensionPoint,
+  scaffolderSecretProviderExtensionPoint,
   scaffolderTaskBrokerExtensionPoint,
   scaffolderTemplatingExtensionPoint,
   scaffolderWorkspaceProviderExtensionPoint,
@@ -131,6 +133,18 @@ export const scaffolderPlugin = createBackendPlugin({
     env.registerExtensionPoint(scaffolderWorkspaceProviderExtensionPoint, {
       addProviders(provider) {
         Object.assign(additionalWorkspaceProviders, provider);
+      },
+    });
+
+    const secretProviders: Record<string, ScaffolderSecretProvider> = {};
+    env.registerExtensionPoint(scaffolderSecretProviderExtensionPoint, {
+      addProvider({ id, provider }) {
+        if (secretProviders[id]) {
+          throw new Error(
+            `Secret provider with id '${id}' has already been registered`,
+          );
+        }
+        secretProviders[id] = provider;
       },
     });
 
@@ -241,6 +255,7 @@ export const scaffolderPlugin = createBackendPlugin({
           permissions,
           autocompleteHandlers,
           additionalWorkspaceProviders,
+          secretProviders,
           events,
           auditor,
           actionsRegistry,

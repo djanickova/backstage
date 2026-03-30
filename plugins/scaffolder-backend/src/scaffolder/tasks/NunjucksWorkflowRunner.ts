@@ -66,6 +66,7 @@ import {
   CheckpointState,
 } from '@backstage/plugin-scaffolder-node/alpha';
 import { Config } from '@backstage/config';
+import { ScaffolderSecretProvider } from '@backstage/plugin-scaffolder-node/alpha';
 import { resolveDefaultEnvironment } from '../../lib/defaultEnvironment';
 
 type NunjucksWorkflowRunnerOptions = {
@@ -78,6 +79,7 @@ type NunjucksWorkflowRunnerOptions = {
   additionalTemplateGlobals?: Record<string, TemplateGlobal>;
   permissions?: PermissionsService;
   config?: Config;
+  secretProviders?: Record<string, ScaffolderSecretProvider>;
 };
 
 type TemplateContext = {
@@ -204,7 +206,10 @@ export class NunjucksWorkflowRunner implements WorkflowRunner {
     secrets?: TaskSecrets;
   }> {
     if (this.options.config) {
-      const defaultEnvironment = resolveDefaultEnvironment(this.options.config);
+      const defaultEnvironment = await resolveDefaultEnvironment(
+        this.options.config,
+        this.options.secretProviders,
+      );
       return {
         parameters: defaultEnvironment.parameters,
         secrets: defaultEnvironment.secrets,
