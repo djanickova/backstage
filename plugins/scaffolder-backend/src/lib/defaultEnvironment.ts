@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Backstage Authors
+ * Copyright 2026 The Backstage Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import { Config } from '@backstage/config';
+import { InputError } from '@backstage/errors';
 import { JsonObject } from '@backstage/types';
 import { ScaffolderSecretProvider } from '@backstage/plugin-scaffolder-node/alpha';
 
@@ -56,11 +57,20 @@ export async function resolveDefaultEnvironment(
   const secretsConfig = defaultEnvConfig.getOptionalConfig('secrets');
   if (secretsConfig) {
     for (const secretKey of secretsConfig.keys()) {
-      const stringValue = secretsConfig.getOptionalString(secretKey);
+      const rawValue = secretsConfig.getOptional(secretKey);
 
-      if (stringValue !== undefined) {
-        secrets[secretKey] = stringValue;
-      } else {
+      if (typeof rawValue === 'string') {
+        secrets[secretKey] = rawValue;
+      } else if (rawValue !== undefined) {
+        if (
+          typeof rawValue !== 'object' ||
+          typeof (rawValue as Record<string, unknown>).provider !== 'string'
+        ) {
+          throw new InputError(
+            `Invalid config for secret '${secretKey}': expected a string or an object with a 'provider' field`,
+          );
+        }
+
         const secretKeyConfig = secretsConfig.getConfig(secretKey);
         const providerId = secretKeyConfig.getString('provider');
         const provider = secretProviders?.[providerId];

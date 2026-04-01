@@ -6776,6 +6776,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@backstage/plugin-scaffolder-backend-module-vault@workspace:^, @backstage/plugin-scaffolder-backend-module-vault@workspace:plugins/scaffolder-backend-module-vault":
+  version: 0.0.0-use.local
+  resolution: "@backstage/plugin-scaffolder-backend-module-vault@workspace:plugins/scaffolder-backend-module-vault"
+  dependencies:
+    "@backstage/backend-plugin-api": "workspace:^"
+    "@backstage/backend-test-utils": "workspace:^"
+    "@backstage/cli": "workspace:^"
+    "@backstage/config": "workspace:^"
+    "@backstage/errors": "workspace:^"
+    "@backstage/plugin-scaffolder-node": "workspace:^"
+    "@backstage/types": "workspace:^"
+    msw: "npm:^2.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@backstage/plugin-scaffolder-backend-module-yeoman@workspace:plugins/scaffolder-backend-module-yeoman":
   version: 0.0.0-use.local
   resolution: "@backstage/plugin-scaffolder-backend-module-yeoman@workspace:plugins/scaffolder-backend-module-yeoman"
@@ -30695,6 +30710,8 @@ __metadata:
     "@backstage/plugin-scaffolder-backend": "workspace:^"
     "@backstage/plugin-scaffolder-backend-module-github": "workspace:^"
     "@backstage/plugin-scaffolder-backend-module-notifications": "workspace:^"
+    "@backstage/plugin-scaffolder-backend-module-vault": "workspace:^"
+    "@backstage/plugin-scaffolder-node": "workspace:^"
     "@backstage/plugin-search-backend": "workspace:^"
     "@backstage/plugin-search-backend-module-catalog": "workspace:^"
     "@backstage/plugin-search-backend-module-elasticsearch": "workspace:^"

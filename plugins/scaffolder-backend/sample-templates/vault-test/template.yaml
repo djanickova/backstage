@@ -1,0 +1,42 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: vault-secret-test
+  title: Vault Secret Test
+  description: Tests that environment secrets are resolved from HashiCorp Vault
+spec:
+  owner: user:guest
+  type: service
+
+  parameters:
+    - title: Run Vault Secret Test
+      properties:
+        dummyInput:
+          title: Dummy
+          type: string
+          default: go
+          description: Just click Create to run the test
+
+  steps:
+    - id: log-secret
+      name: Log vault secret (will appear as ***)
+      action: debug:log
+      input:
+        message: "Vault secret value: ${{ environment.secrets.GITHUB_TOKEN }}"
+
+    - id: verify-token
+      name: Verify GitHub token from Vault
+      action: debug:verify-github-token
+      input:
+        token: ${{ environment.secrets.GITHUB_TOKEN }}
+
+  output:
+    text:
+      - title: Result
+        content: |
+          Template executed successfully.
+
+          - **Step 1** (debug:log): Secret was resolved — you should see `***` in the log.
+          - **Step 2** (verify-token): Called GitHub API with the token.
+            Authenticated as: **${{ steps['verify-token'].output.username }}**
+            Token valid: **${{ steps['verify-token'].output.authenticated }}**
