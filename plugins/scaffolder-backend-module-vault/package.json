@@ -50,9 +50,7 @@
     "@backstage/types": "workspace:^"
   },
   "devDependencies": {
-    "@backstage/backend-test-utils": "workspace:^",
-    "@backstage/cli": "workspace:^",
-    "msw": "^2.0.0"
+    "@backstage/cli": "workspace:^"
   },
   "configSchema": "config.d.ts"
 }
